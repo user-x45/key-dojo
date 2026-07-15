@@ -519,7 +519,6 @@
     </div>
 
     <div class="online-status" id="countdown">
-      <div class="status-title" id="countdown-starter"></div>
       <div class="countdown-number" id="countdown-number">3</div>
     </div>
 
@@ -617,7 +616,6 @@ const searchingEl = document.getElementById("searching");
 const searchCountLabelEl = document.getElementById("search-count-label");
 const cancelSearchBtn = document.getElementById("cancel-search-btn");
 const countdownEl = document.getElementById("countdown");
-const countdownStarterEl = document.getElementById("countdown-starter");
 const countdownNumberEl = document.getElementById("countdown-number");
 
 const ONLINE_SERVER_URL = "wss://key-onl.user-x45.workers.dev";
@@ -727,7 +725,7 @@ function connectToMatch(){
     const msg = JSON.parse(event.data);
     if(msg.type === "start"){
       onlineWordDeck = msg.wordDeck;
-      startOnlineCountdown(msg.starter);
+      startOnlineCountdown();
     } else if(msg.type === "opponentProgress"){
       opponentScore = msg.score;
       updateOpponentHud();
@@ -744,11 +742,9 @@ function connectToMatch(){
   };
 }
 
-function startOnlineCountdown(starter){
+function startOnlineCountdown(){
   searchingEl.classList.remove("visible");
   countdownEl.classList.add("visible");
-  const starterLabel = starter === "you" ? "あなた" : "あいて";
-  countdownStarterEl.textContent = `せんこう：${starterLabel}`;
   let count = 3;
   countdownNumberEl.textContent = count;
   const t = setInterval(() => {
