@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ランキング管理｜シンプルタイピング</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+
+  :root{
+    --washi:#f2ead9;
+    --washi-deep:#e7dcc2;
+    --ink:#1f1c19;
+    --ink-soft:#3a352e;
+    --hanko:#a8352a;
+    --hanko-deep:#7e2019;
+    --gold:#b8933f;
+    --line:#c9bb9a;
+    --panel-bg:rgba(255,253,246,0.55);
+    --panel-bg-soft:rgba(255,253,246,0.5);
+    --input-bg:rgba(255,253,246,0.7);
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root{
+      --washi:#1c1a17;
+      --washi-deep:#141210;
+      --ink:#ece5d6;
+      --ink-soft:#c9bfa9;
+      --hanko:#d9584a;
+      --hanko-deep:#f07264;
+      --gold:#d9b45f;
+      --line:#4a4438;
+      --panel-bg:rgba(40,36,30,0.55);
+      --panel-bg-soft:rgba(40,36,30,0.5);
+      --input-bg:rgba(40,36,30,0.7);
+    }
+  }
+
+  *{box-sizing:border-box;}
+
+  html{height:100%;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    min-height:100dvh;
+    background:var(--washi);
+    color:var(--ink);
+    font-family:'Zen Kaku Gothic New', sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:40px 16px;
+  }
+
+  .stage{
+    width:100%;
+    max-width:920px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:28px;
+  }
+
+  .kicker{
+    font-size:12px;
+    letter-spacing:0.35em;
+    color:var(--gold);
+    margin-bottom:6px;
+  }
+
+  h1{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:30px;
+    margin:0;
+    letter-spacing:0.06em;
+  }
+
+  .panel{
+    background:var(--panel-bg);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:28px;
+  }
+
+  .login-panel{
+    max-width:360px;
+    margin:0 auto;
+  }
+
+  .field-label{
+    display:block;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+
+  input[type="password"]{
+    width:100%;
+    padding:12px 14px;
+    background:var(--input-bg);
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    font-size:15px;
+    color:var(--ink);
+    outline:none;
+    font-family:'Zen Kaku Gothic New', sans-serif;
+  }
+
+  input[type="password"]:focus{
+    border-color:var(--gold);
+  }
+
+  .login-btn{
+    width:100%;
+    margin-top:16px;
+    padding:12px;
+    background:var(--hanko);
+    color:var(--washi);
+    border:none;
+    border-radius:3px;
+    font-family:'Shippori Mincho', serif;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .login-btn:hover{
+    background:var(--hanko-deep);
+  }
+
+  .error-text{
+    color:var(--hanko);
+    font-size:13px;
+    margin-top:10px;
+    min-height:1em;
+  }
+
+  .hidden{display:none !important;}
+
+  .board-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    gap:16px;
+  }
+
+  .board{
+    background:var(--panel-bg-soft);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px;
+  }
+
+  .board-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px;
+  }
+
+  .board-title{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  .clear-btn{
+    background:transparent;
+    border:1px solid var(--hanko);
+    color:var(--hanko);
+    border-radius:3px;
+    padding:5px 10px;
+    font-size:12px;
+    cursor:pointer;
+  }
+
+  .clear-btn:hover{
+    background:var(--hanko);
+    color:var(--washi);
+  }
+
+  .score-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:7px 4px;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+    font-size:13px;
+  }
+
+  .score-row:last-child{
+    border-bottom:none;
+  }
+
+  .score-rank{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    color:var(--hanko);
+    width:40px;
+  }
+
+  .score-value{
+    flex:1;
+    font-weight:600;
+  }
+
+  .delete-btn{
+    background:transparent;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:12px;
+    padding:2px 6px;
+  }
+
+  .delete-btn:hover{
+    color:var(--hanko);
+  }
+
+  .empty-text{
+    font-size:13px;
+    color:var(--ink-soft);
+    opacity:0.7;
+    padding:6px 4px;
+  }
+
+  .top-actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:16px;
+  }
+
+  .refresh-btn{
+    background:transparent;
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+    border-radius:3px;
+    padding:8px 18px;
+    font-family:'Shippori Mincho', serif;
+    font-size:13px;
+    cursor:pointer;
+  }
+
+  .refresh-btn:hover{
+    background:var(--ink);
+    color:var(--washi);
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <div class="kicker">SIMPLE TYPING</div>
+    <h1>ランキング管理</h1>
+  </header>
+
+  <div class="panel login-panel" id="login-panel">
+    <label class="field-label" for="password-input">管理者パスワード</label>
+    <input type="password" id="password-input" autocomplete="off">
+    <button class="login-btn" id="login-btn">開く</button>
+    <div class="error-text" id="login-error"></div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <div class="top-actions">
+      <button class="refresh-btn" id="refresh-btn">再読み込み</button>
+    </div>
+    <div class="board-grid" id="board-grid"></div>
+  </div>
+</div>
+
+<script>
+const WORKER_URL = "https://key-onl.user-x45.workers.dev";
+const MODE_LABELS = { hiragana: "ひらがな", kanji: "文章" };
+const LEVEL_LABELS = { beginner: "初級", intermediate: "中級", advanced: "上級" };
+const MODES = ["hiragana", "kanji"];
+const LEVELS = ["beginner", "intermediate", "advanced"];
+
+let adminPassword = "";
+
+const loginPanelEl = document.getElementById("login-panel");
+const dashboardEl = document.getElementById("dashboard");
+const passwordInputEl = document.getElementById("password-input");
+const loginBtnEl = document.getElementById("login-btn");
+const loginErrorEl = document.getElementById("login-error");
+const refreshBtnEl = document.getElementById("refresh-btn");
+const boardGridEl = document.getElementById("board-grid");
+
+async function callAdmin(action, extra){
+  const res = await fetch(`${WORKER_URL}/admin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: adminPassword, action, ...extra })
+  });
+  if(res.status === 401){
+    throw new Error("unauthorized");
+  }
+  return res.json();
+}
+
+function renderBoards(data){
+  boardGridEl.innerHTML = "";
+  for(const mode of MODES){
+    for(const level of LEVELS){
+      const key = `${mode}:${level}`;
+      const scores = data[key] || [];
+      const board = document.createElement("div");
+      board.className = "board";
+
+      const head = document.createElement("div");
+      head.className = "board-head";
+
+      const title = document.createElement("div");
+      title.className = "board-title";
+      title.textContent = `${MODE_LABELS[mode]}・${LEVEL_LABELS[level]}`;
+
+      const clearBtn = document.createElement("button");
+      clearBtn.className = "clear-btn";
+      clearBtn.textContent = "全削除";
+      clearBtn.addEventListener("click", async () => {
+        if(!confirm(`${MODE_LABELS[mode]}・${LEVEL_LABELS[level]} のランキングを全て削除しますか？`)) return;
+        await callAdmin("clear", { mode, level });
+        loadDashboard();
+      });
+
+      head.appendChild(title);
+      head.appendChild(clearBtn);
+      board.appendChild(head);
+
+      if(scores.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "empty-text";
+        empty.textContent = "データがありません";
+        board.appendChild(empty);
+      } else {
+        scores.forEach((score, i) => {
+          const row = document.createElement("div");
+          row.className = "score-row";
+
+          const rank = document.createElement("div");
+          rank.className = "score-rank";
+          rank.textContent = `${i + 1}位`;
+
+          const value = document.createElement("div");
+          value.className = "score-value";
+          value.textContent = score;
+
+          const del = document.createElement("button");
+          del.className = "delete-btn";
+          del.textContent = "削除";
+          del.addEventListener("click", async () => {
+            await callAdmin("delete", { mode, level, score });
+            loadDashboard();
+          });
+
+          row.appendChild(rank);
+          row.appendChild(value);
+          row.appendChild(del);
+          board.appendChild(row);
+        });
+      }
+
+      boardGridEl.appendChild(board);
+    }
+  }
+}
+
+async function loadDashboard(){
+  try{
+    const data = await callAdmin("list", {});
+    renderBoards(data);
+  }catch(e){
+    loginErrorEl.textContent = "データの取得に失敗しました";
+  }
+}
+
+async function tryLogin(){
+  adminPassword = passwordInputEl.value;
+  loginErrorEl.textContent = "";
+  try{
+    const data = await callAdmin("list", {});
+    loginPanelEl.classList.add("hidden");
+    dashboardEl.classList.remove("hidden");
+    renderBoards(data);
+  }catch(e){
+    loginErrorEl.textContent = "パスワードが違います";
+  }
+}
+
+loginBtnEl.addEventListener("click", tryLogin);
+passwordInputEl.addEventListener("keydown", (e) => {
+  if(e.key === "Enter") tryLogin();
+});
+refreshBtnEl.addEventListener("click", loadDashboard);
+</script>
+</body>
+</html>
