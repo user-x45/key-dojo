@@ -1037,14 +1037,17 @@ function updateUrlHash(){
 
 function applyStateFromHash(){
   const hash = window.location.hash.replace("#", "");
-  if(!hash) return;
-  const [mode, level] = hash.split("-");
   const validModes = ["hiragana", "kanji"];
   const validLevels = ["beginner", "intermediate", "advanced"];
-  if(!validModes.includes(mode) || !validLevels.includes(level)) return;
+  const [mode, level] = hash.split("-");
 
-  currentMode = mode;
-  currentLevel = level;
+  if(hash && validModes.includes(mode) && validLevels.includes(level)){
+    currentMode = mode;
+    currentLevel = level;
+  } else {
+    currentMode = "hiragana";
+    currentLevel = "beginner";
+  }
 
   document.querySelectorAll(".mode-btn").forEach(b => {
     b.classList.toggle("active", b.dataset.mode === currentMode);
@@ -1061,6 +1064,7 @@ function applyStateFromHash(){
 }
 
 applyStateFromHash();
+window.addEventListener("hashchange", applyStateFromHash);
 
 document.getElementById("start-btn").addEventListener("click", startGame);
 document.getElementById("start-online-btn").addEventListener("click", startOnlineSearch);
