@@ -1035,6 +1035,33 @@ function updateUrlHash(){
   }
 }
 
+function applyStateFromHash(){
+  const hash = window.location.hash.replace("#", "");
+  if(!hash) return;
+  const [mode, level] = hash.split("-");
+  const validModes = ["hiragana", "kanji"];
+  const validLevels = ["beginner", "intermediate", "advanced"];
+  if(!validModes.includes(mode) || !validLevels.includes(level)) return;
+
+  currentMode = mode;
+  currentLevel = level;
+
+  document.querySelectorAll(".mode-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.mode === currentMode);
+  });
+
+  document.querySelectorAll(".levels").forEach(row => {
+    row.classList.toggle("hidden", row.dataset.row !== currentMode);
+    row.querySelectorAll(".level-btn").forEach(lb => {
+      lb.classList.toggle("active", lb.dataset.level === currentLevel);
+    });
+  });
+
+  loadRanking();
+}
+
+applyStateFromHash();
+
 document.getElementById("start-btn").addEventListener("click", startGame);
 document.getElementById("start-online-btn").addEventListener("click", startOnlineSearch);
 cancelSearchBtn.addEventListener("click", cancelSearch);
