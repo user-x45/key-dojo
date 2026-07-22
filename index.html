@@ -449,7 +449,8 @@
     font-size:46px;
     font-weight:600;
     letter-spacing:0.12em;
-    word-break:break-all;
+    white-space:nowrap;
+    overflow:hidden;
   }
 
   .char{
@@ -995,6 +996,7 @@ function fitSpacerToViewport(){
 }
 
 window.addEventListener("resize", fitSpacerToViewport);
+window.addEventListener("resize", fitWordDisplayFontSize);
 
 document.querySelectorAll(".mode-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1223,6 +1225,18 @@ function pickWord(){
 
 function renderWord(){
   wordDisplayEl.innerHTML = currentWord.split("").map(c => `<span class="char">${c}</span>`).join("");
+  fitWordDisplayFontSize();
+}
+
+function fitWordDisplayFontSize(){
+  const baseSize = parseFloat(getComputedStyle(wordDisplayEl).fontSize);
+  const minSize = 12;
+  let size = baseSize;
+  wordDisplayEl.style.fontSize = "";
+  while(wordDisplayEl.scrollWidth > wordDisplayEl.clientWidth && size > minSize){
+    size -= 1;
+    wordDisplayEl.style.fontSize = `${size}px`;
+  }
 }
 
 function updateProgressHighlight(typed){
