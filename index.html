@@ -1282,10 +1282,12 @@ function fitWordDisplayFontSize(){
 
 function updateProgressHighlight(typed){
   const chars = wordDisplayEl.querySelectorAll(".char");
+  let stillCorrect = true;
   chars.forEach((el, i) => {
-    if(i < typed.length && typed[i] === currentWord[i]){
+    if(stillCorrect && i < typed.length && typed[i] === currentWord[i]){
       el.classList.add("done");
     } else {
+      stillCorrect = false;
       el.classList.remove("done");
     }
   });
